@@ -40,7 +40,7 @@ jobs:
           # This path must be relative to the root of the repository.
           # Since the build output is 'dist/public' inside 'client', 
           # the final path is 'client/dist/public'.
-          path: './client/src/public' 
+          path: './client/dist/public' 
           
       - name: Deploy to GitHub Pages
         id: deployment
