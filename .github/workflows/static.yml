@@ -1,13 +1,11 @@
-# Example content for .github/workflows/deploy.yml
-name: Deploy static content to Pages
+# 1. Update the deploy.yml file in your repository
+
+name: Deploy Static Content to Pages
 on:
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions to allow the GITHUB_TOKEN to be used for deployment
 permissions:
   contents: read
   pages: write
@@ -24,22 +22,25 @@ jobs:
         with:
           node-version: "20"
       
-\
-      - name: Install dependencies
-        run: npm install
+      # 💥 CRITICAL FIX: Tell the actions to work in the 'client' directory
+      # This is where your package.json (and thus, your npm scripts) is located.
+      - name: Install dependencies and Build
+        run: |
+          npm install
+          npm run build
+        working-directory: ./client  # <--- THIS IS THE KEY CHANGE
 
-      - name: Build project
-        run: npm run build
-      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
-
+      # 💥 CRITICAL FIX: Tell the action where to find the static files to upload
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-
-          path: 'dist/public'
+          # This path must be relative to the root of the repository.
+          # Since the build output is 'dist/public' inside 'client', 
+          # the final path is 'client/dist/public'.
+          path: './client/src/public' 
           
       - name: Deploy to GitHub Pages
         id: deployment
